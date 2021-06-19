@@ -47,6 +47,28 @@ def get_CG(p,C):
     M = np.stack(M)
     return M
 
+def get_CGW(p,C):
+    W = []
+    a = 0
+    N = 20
+    Wlist = []
+    for i in range(21):
+        Wlist.append(a)
+        a += N
+        N = N - 1
+
+    iu = np.triu_indices(C.joint_n,1,C.joint_n)
+    for f in range(C.frame_l):
+        #distance max
+        d_m = cdist(p[f],np.concatenate([p[f],np.zeros([1,C.joint_d])]),'euclidean')
+        d_m = d_m[iu]
+        for i in range(len(d_m)):
+            if i not in Wlist:
+                d_m[i] = 0
+        W.append(d_m)
+    W = np.stack(W)
+    return W
+
 def normlize_range(p):
     # normolize to start point, use the center for hand case
     p[:,:,0] = p[:,:,0]-np.mean(p[:,:,0])
